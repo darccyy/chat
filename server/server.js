@@ -32,6 +32,7 @@ const router = express.Router();
 
 //! Test
 router.get("/api/test", (req, res) => {
+  res.setHeader('Access-Control-Allow-Origin', origin);
   res.send("Bruh");
 });
 

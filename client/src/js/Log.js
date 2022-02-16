@@ -1,5 +1,4 @@
 import { Component } from "react";
-import $ from "jquery";
 
 import "../scss/Log.scss";
 
