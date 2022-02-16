@@ -33,11 +33,15 @@ const router = express.Router();
 //! Test
 router.get("/api/test", (req, res) => {
   res.send("Bruh");
-})
+});
 
 // Database stuff
 router.get("/api/log/get", (req, res) => {
+  // res.json({message: "Bruh"});
+  // return;
+
   var { channel } = req.query;
+  console.log(channel);
 
   const collection = dbClient.db(channel).collection("messages");
   collection.find({}).toArray(function (err, result) {
@@ -52,19 +56,17 @@ router.get("/api/log/get", (req, res) => {
 
 router.get("/api/log/post", (req, res) => {
   var { channel, content } = req.query;
+  console.log(channel, content);
 
   const collection = dbClient.db(channel).collection("messages");
   collection
     .insertOne({
       channel,
-      // name: session.user.name,
-      // user: session.user.login,
       content,
-      // userData,
       time: Date.now(),
     })
     .then(() => {
-      res.status(200);
+      res.sendStatus(200);
     })
     .catch((err) => {
       console.error(err);
