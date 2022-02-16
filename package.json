@@ -1,7 +1,7 @@
 {
-  "name": "react-express-template",
+  "name": "chat",
   "version": "1.0.1",
-  "description": "Basic template for React in Express with Heroku support",
+  "description": "Chat app",
   "main": "server/server.js",
   "engines": {
     "node": "16.13.0"

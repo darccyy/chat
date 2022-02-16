@@ -1,8 +1,8 @@
 {
-  "name": "react-express-template-client",
+  "name": "chat-client",
   "version": "1.0.0",
   "private": true,
-  "description": "Client for React Express Template",
+  "description": "Client for Chat app",
   "proxy": "http://localhost:3001",
   "dependencies": {
     "jquery": "^3.6.0",

@@ -1,8 +1,8 @@
 {
-  "name": "react-express-template-server",
+  "name": "chat-server",
   "version": "1.0.0",
   "private": true,
-  "description": "Server for React Express Template",
+  "description": "Server for Chat app",
   "main": "server.js",
   "dependencies": {
     "body-parser": "^1.18.3",
