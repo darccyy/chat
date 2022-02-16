@@ -8,12 +8,13 @@ class Message extends Component {
 
   // Fetch message from server, Add to state
   componentDidMount() {
-    fetch("/api/test")
+    fetch("/api/log/get")
       .then(res => res.json())
       .then(json => this.setState(json));
   }
 
   render() {
+    console.log(this.state);
     // Display server message
     return (
       <p className="Message">

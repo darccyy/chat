@@ -3,6 +3,21 @@ const path = require("path");
 const express = require("express");
 const app = express();
 const bodyParser = require("body-parser");
+const { MongoClient } = require("mongodb");
+require("dotenv").config();
+
+const dbUri = `mongodb+srv://${process.env.DBUSER}:${process.env.DBPASS}@cluster0.zrsr5.mongodb.net/myFirstDatabase?retryWrites=true&w=majority`;
+const dbClient = new MongoClient(dbUri, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+});
+
+dbClient.connect((err) => {
+  if (err) {
+    throw err;
+  }
+  console.log("Connected to MongoDB");
+});
 
 // Use body parser
 app.use(bodyParser.json());
@@ -15,9 +30,46 @@ app.use(staticFiles);
 // Start router
 const router = express.Router();
 
-// Api test message
+//! Test
 router.get("/api/test", (req, res) => {
-  res.json({ message: "This was sent from server. ❤" });
+  res.send("Bruh");
+})
+
+// Database stuff
+router.get("/api/log/get", (req, res) => {
+  var { channel } = req.query;
+
+  const collection = dbClient.db(channel).collection("messages");
+  collection.find({}).toArray(function (err, result) {
+    if (err) {
+      console.error(err);
+      res.status(500).send(err);
+    } else {
+      res.json(result);
+    }
+  });
+});
+
+router.get("/api/log/post", (req, res) => {
+  var { channel, content } = req.query;
+
+  const collection = dbClient.db(channel).collection("messages");
+  collection
+    .insertOne({
+      channel,
+      // name: session.user.name,
+      // user: session.user.login,
+      content,
+      // userData,
+      time: Date.now(),
+    })
+    .then(() => {
+      res.status(200);
+    })
+    .catch((err) => {
+      console.error(err);
+      res.status(500).send(err);
+    });
 });
 
 // Use router
