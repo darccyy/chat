@@ -1,0 +1,7 @@
+.Error404 {
+  color: #FBB;
+
+  h1::before {
+    content: "❓"
+  }
+}
