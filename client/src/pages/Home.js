@@ -2,7 +2,7 @@ import { Component } from "react";
 
 import "../scss/Home.scss";
 
-import Message from "../js/Message";
+import Log from "../js/Log";
 
 class Home extends Component {
   render() {
@@ -11,8 +11,8 @@ class Home extends Component {
       <div className="Home">
         <h1>Home Page</h1>
 
-        {/* Display server message */}
-        <Message />
+        {/* Logs */}
+        <Log />
       </div>
     );
   }

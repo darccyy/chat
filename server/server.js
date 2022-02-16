@@ -37,9 +37,6 @@ router.get("/api/test", (req, res) => {
 
 // Database stuff
 router.get("/api/log/get", (req, res) => {
-  // res.json({message: "Bruh"});
-  // return;
-
   var { channel } = req.query;
   console.log(channel);
 
@@ -72,6 +69,23 @@ router.get("/api/log/post", (req, res) => {
       console.error(err);
       res.status(500).send(err);
     });
+});
+
+router.get("/api/log/clear", (req, res) => {
+  var { channel, content } = req.query;
+  console.log(channel, content);
+  console.log(`ALL MESSAGES DELETED`);
+
+  const collection = dbClient.db(channel).collection("messages");
+  collection.drop((error, delOK) => {
+    if (error) {
+      console.error(error);
+      res.sendStatus(500);
+    }
+    if (delOK) {
+      res.sendStatus(200);
+    }
+  });
 });
 
 // Use router

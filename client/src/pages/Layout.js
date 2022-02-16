@@ -11,10 +11,8 @@ class Layout extends Component {
         {/* Header text */}
         <header>
           <Link to="/" title="Home Page">
-            <h1>React Express Test</h1>
+            <h1>Chat App</h1>
           </Link>
-
-          <Link to="/contact">Contact</Link>
 
           <Link to="/this/a/random/link">404 Page</Link>
         </header>
