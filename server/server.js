@@ -58,7 +58,7 @@ io.on("connection", (socket) => {
 
 server.listen(5000, (err) => {
   if (err) console.log(err);
-  console.log("Server running on Port ", 5000);
+  console.log("Server running on Port 5000");
 });
 
 // Database stuff
