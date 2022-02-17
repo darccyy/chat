@@ -41,7 +41,7 @@ const server = http.createServer(app);
 
 const socketIO = require("socket.io");
 const URL = process.env.PORT
-  ? "https://bolsa-chat.herokuapp.com:" + process.env.PORT
+  ? "https://bolsa-chat.herokuapp.com"
   : "http://localhost:3000";
 console.log("Url", URL);
 const io = socketIO(server, {
