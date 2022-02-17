@@ -19,6 +19,9 @@ export default class extends Component {
     socket.on("log", (data) => {
       this.get();
     });
+    socket.on("time", (data) => {
+      console.log(data);
+    });
     socket.on("disconnect", () => console.log("server disconnected"));
   }
 

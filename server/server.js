@@ -36,11 +36,11 @@ router.get("/api/test", (req, res) => {
 });
 
 //* Socket
-const socketIo = require("socket.io");
 const http = require("http");
-
 const server = http.createServer(app);
-const io = socketIo(server, {
+
+const socketIO = require("socket.io");
+const io = socketIO(server, {
   cors: {
     origin: "http://localhost:3000",
   },
@@ -60,6 +60,10 @@ server.listen(5000, (err) => {
   if (err) console.log(err);
   console.log("Server running on Port 5000");
 });
+
+setInterval(() => {
+  io.emit("time", Date.now());
+}, 500);
 
 // Database stuff
 router.get("/api/log/get", (req, res) => {
