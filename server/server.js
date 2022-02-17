@@ -46,9 +46,12 @@ const URL = process.env.PORT
 console.log("Url", URL);
 const io = socketIO(server, {
   cors: {
-    origin: URL,
+    origin: "*",
   },
 });
+
+const cors = require("cors")
+app.use(cors()) 
 
 io.on("connection", (socket) => {
   console.log("client connected: ", socket.id);
