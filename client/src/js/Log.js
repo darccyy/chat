@@ -8,39 +8,25 @@ export default class extends Component {
   state = { input: "", log: null };
 
   componentDidMount() {
-    var socket = io.connect("/socket");
+    this.get();
+
+    var socket = io.connect("/chat");
     socket.on("connect", function () {
       console.log("! Server connect");
     });
-
-    socket.on("test", function (data) {
-      console.log(data);
-    })
 
     socket.on("disconnect", function () {
       console.warn("! Server disconnect");
     });
 
-    // this.get();
+    socket.on("test", function (data) {
+      console.warn("!!! TEST SOCKET SENT", data);
+    });
 
-    // const URL =
-    //   location.hostname === "localhost"
-    //     ? "http://localhost:5000"
-    //     : "https://bolsa-chat.herokuapp.com:5000";
-    // console.log(URL);
-
-    // const socket = io(URL);
-    // socket.on("connect", () => console.log(socket.id));
-    // socket.on("connect_error", () => {
-    //   setTimeout(() => socket.connect(), 5000);
-    // });
-    // socket.on("log", (data) => {
-    //   this.get();
-    // });
-    // socket.on("time", (data) => {
-    //   console.log(data);
-    // });
-    // socket.on("disconnect", () => console.log("server disconnected"));
+    const self = this; // Access 'this' in callback
+    socket.on("refresh", function (data) {
+      self.setState({log: data.log});
+    });
   }
 
   get = async () => {
@@ -65,7 +51,6 @@ export default class extends Component {
         `/api/log/post?channel=root&content=${this.state.input}`
       );
       console.log(res);
-      // this.get();
     } catch (err) {
       console.error(err);
     }

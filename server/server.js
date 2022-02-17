@@ -35,46 +35,6 @@ router.get("/api/test", (req, res) => {
   res.status(200).send("Hello World");
 });
 
-// const http = require("http");
-// const server = http.createServer(app);
-
-// const socketIO = require("socket.io");
-// const URL = process.env.PORT
-//   ? "https://bolsa-chat.herokuapp.com:3000"
-//   : "http://localhost:3000";
-// console.log("URL:", URL);
-// const io = socketIO(server, {
-//   cors: {
-//     origin: URL,
-//   },
-// });
-
-// const cors = require("cors");
-// app.use(
-//   cors({
-//     origin: "*",
-//   })
-// );
-
-// io.on("connection", (socket) => {
-//   console.log("client connected: ", socket.id);
-
-//   socket.join("root");
-
-//   socket.on("disconnect", (reason) => {
-//     console.log(reason);
-//   });
-// });
-
-// server.listen(5000, (err) => {
-//   if (err) console.log(err);
-//   console.log("Server running on Port 5000");
-// });
-
-// setInterval(() => {
-//   io.emit("time", Date.now());
-// }, 500);
-
 // Database stuff
 router.get("/api/log/get", (req, res) => {
   var { channel } = req.query;
@@ -110,7 +70,19 @@ router.get("/api/log/post", (req, res) => {
           console.error(err);
           res.status(500).send(err);
         } else {
-          io.to(channel).emit("log", result);
+          console.log("POST POST");
+          // const fs = require("fs");
+          // fs.writeFileSync(__dirname + "/output.json", JSON.stringify(decircleJSON(io), null, 2));
+          collection.find({}).toArray(function (err, result) {
+            if (err) {
+              console.error(err);
+              // res.status(500).send(err);
+            } else {
+              // res.json(result);
+              io.of("/chat").to("root").emit("test", "Hello World!");
+              io.of("/chat").to("root").emit("refresh", { log: result });
+            }
+          });
         }
       });
     })
@@ -158,17 +130,32 @@ app.use(
   })
 );
 
+// Socket
+
 const io = require("socket.io")(server);
-var app_socket = io.of("/socket");
-app_socket.on("connection", function (socket) {
+var app_socket = io.of("/chat");
+app_socket.on("connection", function (socket, data) {
   console.log("Client connected");
 
   socket.on("disconnect", function () {
     console.log("Client disconnected");
   });
 
-  socket.emit("test", Date.now());
-  setInterval(() => {
-    socket.emit("test", Date.now());
-  }, 1000);
+  socket.join("root");
 });
+
+//! TEST
+function decircleJSON(object) {
+  var cache = [];
+  return JSON.parse(
+    JSON.stringify(object, (key, val) => {
+      if (typeof val === "object" && val !== null) {
+        if (cache.includes(val)) {
+          return;
+        }
+        cache.push(val);
+      }
+      return val;
+    })
+  );
+}
