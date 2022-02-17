@@ -41,12 +41,12 @@ const server = http.createServer(app);
 
 const socketIO = require("socket.io");
 const URL = process.env.PORT
-  ? "https://bolsa-chat.herokuapp.com"
+  ? "https://bolsa-chat.herokuapp.com:3000"
   : "http://localhost:3000";
 console.log("URL:", URL);
 const io = socketIO(server, {
   cors: {
-    origin: "*",
+    origin: URL,
   },
 });
 
