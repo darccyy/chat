@@ -10,8 +10,8 @@ export default class extends Component {
   componentDidMount() {
     this.get();
 
-    console.log("http://" + location.hostname + ":5000");
-    const socket = io("http://" + location.hostname + ":5000");
+    console.log(location.protocol + "//" + location.hostname + ":5000");
+    const socket = io(location.protocol + "//" + location.hostname + ":5000");
     socket.on("connect", () => console.log(socket.id));
     socket.on("connect_error", () => {
       setTimeout(() => socket.connect(), 5000);

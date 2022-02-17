@@ -40,9 +40,13 @@ const http = require("http");
 const server = http.createServer(app);
 
 const socketIO = require("socket.io");
+const URL = process.env.PORT
+  ? "https://bolsa-advocate.herokuapp.com:" + process.env.PORT
+  : "http://localhost:3000";
+console.log("Url", URL);
 const io = socketIO(server, {
   cors: {
-    origin: "http://localhost:3000",
+    origin: URL,
   },
 });
 
