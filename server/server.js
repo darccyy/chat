@@ -32,8 +32,33 @@ const router = express.Router();
 
 //! Test
 router.get("/api/test", (req, res) => {
-  res.setHeader('Access-Control-Allow-Origin', req.headers.origin);
-  res.send("Bruh");
+  res.status(200).send("Hello World");
+});
+
+//* Socket
+const socketIo = require("socket.io");
+const http = require("http");
+
+const server = http.createServer(app);
+const io = socketIo(server, {
+  cors: {
+    origin: "http://localhost:3000",
+  },
+});
+
+io.on("connection", (socket) => {
+  console.log("client connected: ", socket.id);
+
+  socket.join("root");
+
+  socket.on("disconnect", (reason) => {
+    console.log(reason);
+  });
+});
+
+server.listen(process.env.PORT || 5000, (err) => {
+  if (err) console.log(err);
+  console.log("Server running on Port ", process.env.PORT || 5000);
 });
 
 // Database stuff
@@ -65,6 +90,15 @@ router.get("/api/log/post", (req, res) => {
     })
     .then(() => {
       res.sendStatus(200);
+      const collection = dbClient.db(channel).collection("messages");
+      collection.find({}).toArray(function (err, result) {
+        if (err) {
+          console.error(err);
+          res.status(500).send(err);
+        } else {
+          io.to(channel).emit("log", result);
+        }
+      });
     })
     .catch((err) => {
       console.error(err);

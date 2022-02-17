@@ -1,14 +1,24 @@
 import { Component } from "react";
+import React from "react";
+import { io } from "socket.io-client";
 
 import "../scss/Log.scss";
 
 export default class extends Component {
-  // Initialize state variable
-  state = { input: "" };
+  state = { input: "", log: null };
 
-  // Fetch message from server, Add to state
   componentDidMount() {
     this.get();
+
+    const socket = io("http://localhost:5000");
+    socket.on("connect", () => console.log(socket.id));
+    socket.on("connect_error", () => {
+      setTimeout(() => socket.connect(), 5000);
+    });
+    socket.on("log", (data) => {
+      this.get();
+    });
+    socket.on("disconnect", () => console.log("server disconnected"));
   }
 
   get = async () => {
@@ -33,7 +43,7 @@ export default class extends Component {
         `/api/log/post?channel=root&content=${this.state.input}`
       );
       console.log(res);
-      this.get();
+      // this.get();
     } catch (err) {
       console.error(err);
     }
@@ -64,6 +74,7 @@ export default class extends Component {
             this.setState({ [event.target.name]: event.target.value })
           }
           autoFocus
+          onKeyDown={(event) => (event.key === "Enter" ? this.post() : null)}
         />
         <button onClick={this.post}>Post</button>
         <button onClick={this.get}>Refresh</button>
@@ -88,7 +99,10 @@ export default class extends Component {
               .map((item, index) => {
                 return (
                   <li key={index}>
-                    {item.content} <span class="time">{new Date(item.time).toLocaleDateString()}</span>
+                    {item.content}{" "}
+                    <span className="time">
+                      {new Date(item.time).toLocaleDateString()}
+                    </span>
                   </li>
                 );
               })
