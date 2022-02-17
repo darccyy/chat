@@ -43,15 +43,19 @@ const socketIO = require("socket.io");
 const URL = process.env.PORT
   ? "https://bolsa-chat.herokuapp.com"
   : "http://localhost:3000";
-console.log("Url", URL);
+console.log("URL:", URL);
 const io = socketIO(server, {
   cors: {
     origin: "*",
   },
 });
 
-const cors = require("cors")
-app.use(cors()) 
+const cors = require("cors");
+app.use(
+  cors({
+    origin: "*",
+  })
+);
 
 io.on("connection", (socket) => {
   console.log("client connected: ", socket.id);

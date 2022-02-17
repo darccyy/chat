@@ -10,16 +10,13 @@ export default class extends Component {
   componentDidMount() {
     this.get();
 
-    console.log(
+    const URL =
       location.hostname === "localhost"
         ? "http://localhost:5000"
-        : "https://bolsa-chat.herokuapp.com"
-    );
-    const socket = io(
-      location.hostname === "localhost"
-        ? "http://localhost:5000"
-        : "https://bolsa-chat.herokuapp.com"
-    );
+        : "https://bolsa-chat.herokuapp.com:5000";
+    console.log(URL);
+    
+    const socket = io(URL);
     socket.on("connect", () => console.log(socket.id));
     socket.on("connect_error", () => {
       setTimeout(() => socket.connect(), 5000);
