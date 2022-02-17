@@ -1,5 +1,5 @@
 import { Component } from "react";
-import React from "react";
+// import React from "react";
 import { io } from "socket.io-client";
 
 import "../scss/Log.scss";
@@ -8,26 +8,39 @@ export default class extends Component {
   state = { input: "", log: null };
 
   componentDidMount() {
-    this.get();
+    var socket = io.connect("/socket");
+    socket.on("connect", function () {
+      console.log("! Server connect");
+    });
 
-    const URL =
-      location.hostname === "localhost"
-        ? "http://localhost:5000"
-        : "https://bolsa-chat.herokuapp.com:5000";
-    console.log(URL);
-    
-    const socket = io(URL);
-    socket.on("connect", () => console.log(socket.id));
-    socket.on("connect_error", () => {
-      setTimeout(() => socket.connect(), 5000);
-    });
-    socket.on("log", (data) => {
-      this.get();
-    });
-    socket.on("time", (data) => {
+    socket.on("test", function (data) {
       console.log(data);
+    })
+
+    socket.on("disconnect", function () {
+      console.warn("! Server disconnect");
     });
-    socket.on("disconnect", () => console.log("server disconnected"));
+
+    // this.get();
+
+    // const URL =
+    //   location.hostname === "localhost"
+    //     ? "http://localhost:5000"
+    //     : "https://bolsa-chat.herokuapp.com:5000";
+    // console.log(URL);
+
+    // const socket = io(URL);
+    // socket.on("connect", () => console.log(socket.id));
+    // socket.on("connect_error", () => {
+    //   setTimeout(() => socket.connect(), 5000);
+    // });
+    // socket.on("log", (data) => {
+    //   this.get();
+    // });
+    // socket.on("time", (data) => {
+    //   console.log(data);
+    // });
+    // socket.on("disconnect", () => console.log("server disconnected"));
   }
 
   get = async () => {

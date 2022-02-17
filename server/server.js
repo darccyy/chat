@@ -35,46 +35,45 @@ router.get("/api/test", (req, res) => {
   res.status(200).send("Hello World");
 });
 
-//* Socket
-const http = require("http");
-const server = http.createServer(app);
+// const http = require("http");
+// const server = http.createServer(app);
 
-const socketIO = require("socket.io");
-const URL = process.env.PORT
-  ? "https://bolsa-chat.herokuapp.com:3000"
-  : "http://localhost:3000";
-console.log("URL:", URL);
-const io = socketIO(server, {
-  cors: {
-    origin: URL,
-  },
-});
+// const socketIO = require("socket.io");
+// const URL = process.env.PORT
+//   ? "https://bolsa-chat.herokuapp.com:3000"
+//   : "http://localhost:3000";
+// console.log("URL:", URL);
+// const io = socketIO(server, {
+//   cors: {
+//     origin: URL,
+//   },
+// });
 
-const cors = require("cors");
-app.use(
-  cors({
-    origin: "*",
-  })
-);
+// const cors = require("cors");
+// app.use(
+//   cors({
+//     origin: "*",
+//   })
+// );
 
-io.on("connection", (socket) => {
-  console.log("client connected: ", socket.id);
+// io.on("connection", (socket) => {
+//   console.log("client connected: ", socket.id);
 
-  socket.join("root");
+//   socket.join("root");
 
-  socket.on("disconnect", (reason) => {
-    console.log(reason);
-  });
-});
+//   socket.on("disconnect", (reason) => {
+//     console.log(reason);
+//   });
+// });
 
-server.listen(5000, (err) => {
-  if (err) console.log(err);
-  console.log("Server running on Port 5000");
-});
+// server.listen(5000, (err) => {
+//   if (err) console.log(err);
+//   console.log("Server running on Port 5000");
+// });
 
-setInterval(() => {
-  io.emit("time", Date.now());
-}, 500);
+// setInterval(() => {
+//   io.emit("time", Date.now());
+// }, 500);
 
 // Database stuff
 router.get("/api/log/get", (req, res) => {
@@ -146,6 +145,30 @@ app.use("/*", staticFiles);
 
 // Start server
 app.set("port", process.env.PORT || 3001);
-app.listen(app.get("port"), () => {
+const server = app.listen(app.get("port"), () => {
   console.log(`Listening on ${app.get("port")}`);
+});
+
+//* Socket
+
+const cors = require("cors");
+app.use(
+  cors({
+    origin: "*",
+  })
+);
+
+const io = require("socket.io")(server);
+var app_socket = io.of("/socket");
+app_socket.on("connection", function (socket) {
+  console.log("Client connected");
+
+  socket.on("disconnect", function () {
+    console.log("Client disconnected");
+  });
+
+  socket.emit("test", Date.now());
+  setInterval(() => {
+    socket.emit("test", Date.now());
+  }, 1000);
 });
