@@ -38,7 +38,7 @@ router.get("/api/test", (req, res) => {
 // Database stuff
 router.get("/api/log/get", (req, res) => {
   var { channel } = req.query;
-  console.log(channel);
+  console.log("GET", channel);
 
   const collection = dbClient.db(channel).collection("messages");
   collection.find({}).toArray(function (err, result) {
@@ -53,7 +53,7 @@ router.get("/api/log/get", (req, res) => {
 
 router.get("/api/log/post", (req, res) => {
   var { channel, content } = req.query;
-  console.log(channel, content);
+  console.log("POST", channel, content);
 
   const collection = dbClient.db(channel).collection("messages");
   collection
@@ -79,8 +79,9 @@ router.get("/api/log/post", (req, res) => {
               // res.status(500).send(err);
             } else {
               // res.json(result);
-              io.of("/chat").to("root").emit("test", "Hello World!");
-              io.of("/chat").to("root").emit("refresh", { log: result });
+              console.log("Socket response", channel);
+              io.of("/chat").to(channel).emit("test", "Hello World!");
+              io.of("/chat").to(channel).emit("refresh", { log: result });
             }
           });
         }
@@ -93,9 +94,8 @@ router.get("/api/log/post", (req, res) => {
 });
 
 router.get("/api/log/clear", (req, res) => {
-  var { channel, content } = req.query;
-  console.log(channel, content);
-  console.log(`ALL MESSAGES DELETED`);
+  var { channel } = req.query;
+  console.log("CLEAR", channel);
 
   const collection = dbClient.db(channel).collection("messages");
   collection.drop((error, delOK) => {
@@ -121,16 +121,13 @@ const server = app.listen(app.get("port"), () => {
   console.log(`Listening on ${app.get("port")}`);
 });
 
-//* Socket
-
+// Socket
 const cors = require("cors");
 app.use(
   cors({
     origin: "*",
   })
 );
-
-// Socket
 
 const io = require("socket.io")(server);
 var app_socket = io.of("/chat");
@@ -141,21 +138,7 @@ app_socket.on("connection", function (socket, data) {
     console.log("Client disconnected");
   });
 
-  socket.join("root");
+  socket.on("join", function (room) {
+    socket.join(room);
+  });
 });
-
-//! TEST
-function decircleJSON(object) {
-  var cache = [];
-  return JSON.parse(
-    JSON.stringify(object, (key, val) => {
-      if (typeof val === "object" && val !== null) {
-        if (cache.includes(val)) {
-          return;
-        }
-        cache.push(val);
-      }
-      return val;
-    })
-  );
-}

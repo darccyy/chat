@@ -13,8 +13,6 @@ class Layout extends Component {
           <Link to="/" title="Home Page">
             <h1>Chat App</h1>
           </Link>
-
-          <Link to="/this/a/random/link">404 Page</Link>
         </header>
 
         {/* This is where the rest of the page goes - In index.js */}

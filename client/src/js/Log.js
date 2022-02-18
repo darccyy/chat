@@ -5,35 +5,37 @@ import { io } from "socket.io-client";
 import "../scss/Log.scss";
 
 export default class extends Component {
-  state = { input: "", log: null };
+  state = { channel: "root", input: "", log: null };
+  socket = null;
 
   componentDidMount() {
     this.get();
 
-    var socket = io.connect("/chat");
-    socket.on("connect", function () {
+    this.socket = io.connect("/chat");
+    this.socket.emit("join", "root");
+    this.socket = this.socket.on("connect", function () {
       console.log("! Server connect");
     });
 
-    socket.on("disconnect", function () {
+    this.socket.on("disconnect", function () {
       console.warn("! Server disconnect");
     });
 
-    socket.on("test", function (data) {
+    this.socket.on("test", function (data) {
       console.warn("!!! TEST SOCKET SENT", data);
     });
 
     const self = this; // Access 'this' in callback
-    socket.on("refresh", function (data) {
-      self.setState({log: data.log});
+    this.socket.on("refresh", function (data) {
+      self.setState({ log: data.log });
     });
   }
 
-  get = async () => {
-    console.log("get");
+  get = async (channel) => {
+    console.log("get", channel || this.state.channel);
 
     try {
-      var res = await fetch("/api/log/get?channel=root");
+      var res = await fetch(`/api/log/get?channel=${channel || this.state.channel}`);
       var json = await res.json();
       this.setState({
         log: json,
@@ -44,11 +46,11 @@ export default class extends Component {
   };
 
   post = async () => {
-    console.log("post");
+    console.log("post", this.state.channel);
 
     try {
       var res = await fetch(
-        `/api/log/post?channel=root&content=${this.state.input}`
+        `/api/log/post?channel=${this.state.channel}&content=${this.state.content}`
       );
       console.log(res);
     } catch (err) {
@@ -60,7 +62,7 @@ export default class extends Component {
     console.log("clear");
 
     try {
-      var res = await fetch(`/api/log/clear?channel=root`);
+      var res = await fetch(`/api/log/clear?channel=${this.state.content}`);
       console.log(res);
       this.get();
     } catch (err) {
@@ -73,16 +75,37 @@ export default class extends Component {
 
     return (
       <div className="Log">
+        <h2>Channel <code>{this.state.channel}</code></h2>
+
         <input
           type="text"
-          id="input"
-          name="input"
+          name="content"
           onChange={(event) =>
             this.setState({ [event.target.name]: event.target.value })
           }
           autoFocus
           onKeyDown={(event) => (event.key === "Enter" ? this.post() : null)}
+          placeholder="Message Content"
         />
+
+        <input
+          type="text"
+          name="channel"
+          onInput={(event) => {
+            if (event.target.value === this.state.channel) {
+              return;
+            }
+
+            if (event.target.value) {
+              this.setState({ [event.target.name]: event.target.value });
+              this.socket.emit("join", event.target.value);
+              this.get(event.target.value);
+            }
+          }}
+          placeholder="Channel"
+          defaultValue={this.state.channel}
+        />
+
         <button onClick={this.post}>Post</button>
         <button onClick={this.get}>Refresh</button>
         <button onClick={this.clear}>CLEAR MESSAGES</button>
