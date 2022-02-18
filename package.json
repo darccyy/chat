@@ -1,6 +1,6 @@
 {
   "name": "chat",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Chat app",
   "main": "server/server.js",
   "engines": {
@@ -16,6 +16,6 @@
     "start:dev": "concurrently \"cd client && npm run start\" \"cd server && npm run start:dev\""
   },
   "keywords": [],
-  "author": "",
+  "authors": ["nslebruh", "darccyy"],
   "license": "MIT"
 }

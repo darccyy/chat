@@ -1,6 +1,6 @@
 {
-  "short_name": "React Express Template",
-  "name": "React Express Template - This name is a placeholder",
+  "short_name": "Chat",
+  "name": "Chat App",
   "icons": [
     {
       "src": "./image/icon.png",

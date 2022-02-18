@@ -6,6 +6,7 @@ const bodyParser = require("body-parser");
 const { MongoClient } = require("mongodb");
 require("dotenv").config();
 
+// Database
 const dbUri = `mongodb+srv://${process.env.DBUSER}:${process.env.DBPASS}@cluster0.zrsr5.mongodb.net/myFirstDatabase?retryWrites=true&w=majority`;
 const dbClient = new MongoClient(dbUri, {
   useNewUrlParser: true,
@@ -36,7 +37,7 @@ router.get("/api/test", (req, res) => {
   res.send("Bruh");
 });
 
-// Database stuff
+// Get Log
 router.get("/api/log/get", (req, res) => {
   var { channel } = req.query;
   console.log(channel);
@@ -52,6 +53,7 @@ router.get("/api/log/get", (req, res) => {
   });
 });
 
+// Post message
 router.get("/api/log/post", (req, res) => {
   var { channel, content } = req.query;
   console.log(channel, content);
@@ -72,6 +74,7 @@ router.get("/api/log/post", (req, res) => {
     });
 });
 
+// Clear messages (Test)
 router.get("/api/log/clear", (req, res) => {
   var { channel, content } = req.query;
   console.log(channel, content);
@@ -92,7 +95,7 @@ router.get("/api/log/clear", (req, res) => {
 // Use router
 app.use(router);
 
-// any routes not picked up by the server api will be handled by the react router
+// Any routes not picked up by the server api will be handled by the react router
 app.use("/*", staticFiles);
 
 // Start server
