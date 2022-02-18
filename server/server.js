@@ -32,14 +32,13 @@ const router = express.Router();
 
 //! Test
 router.get("/api/test", (req, res) => {
-  res.setHeader('Access-Control-Allow-Origin', req.headers.origin);
-  res.send("Bruh");
+  res.status(200).send("Hello World");
 });
 
 // Database stuff
 router.get("/api/log/get", (req, res) => {
   var { channel } = req.query;
-  console.log(channel);
+  console.log("GET", channel);
 
   const collection = dbClient.db(channel).collection("messages");
   collection.find({}).toArray(function (err, result) {
@@ -54,7 +53,7 @@ router.get("/api/log/get", (req, res) => {
 
 router.get("/api/log/post", (req, res) => {
   var { channel, content } = req.query;
-  console.log(channel, content);
+  console.log("POST", channel, content);
 
   const collection = dbClient.db(channel).collection("messages");
   collection
@@ -65,6 +64,28 @@ router.get("/api/log/post", (req, res) => {
     })
     .then(() => {
       res.sendStatus(200);
+      const collection = dbClient.db(channel).collection("messages");
+      collection.find({}).toArray(function (err, result) {
+        if (err) {
+          console.error(err);
+          res.status(500).send(err);
+        } else {
+          console.log("POST POST");
+          // const fs = require("fs");
+          // fs.writeFileSync(__dirname + "/output.json", JSON.stringify(decircleJSON(io), null, 2));
+          collection.find({}).toArray(function (err, result) {
+            if (err) {
+              console.error(err);
+              // res.status(500).send(err);
+            } else {
+              // res.json(result);
+              console.log("Socket response", channel);
+              io.of("/chat").to(channel).emit("test", "Hello World!");
+              io.of("/chat").to(channel).emit("refresh", { log: result });
+            }
+          });
+        }
+      });
     })
     .catch((err) => {
       console.error(err);
@@ -73,9 +94,8 @@ router.get("/api/log/post", (req, res) => {
 });
 
 router.get("/api/log/clear", (req, res) => {
-  var { channel, content } = req.query;
-  console.log(channel, content);
-  console.log(`ALL MESSAGES DELETED`);
+  var { channel } = req.query;
+  console.log("CLEAR", channel);
 
   const collection = dbClient.db(channel).collection("messages");
   collection.drop((error, delOK) => {
@@ -97,6 +117,28 @@ app.use("/*", staticFiles);
 
 // Start server
 app.set("port", process.env.PORT || 3001);
-app.listen(app.get("port"), () => {
+const server = app.listen(app.get("port"), () => {
   console.log(`Listening on ${app.get("port")}`);
+});
+
+// Socket
+const cors = require("cors");
+app.use(
+  cors({
+    origin: "*",
+  })
+);
+
+const io = require("socket.io")(server);
+var app_socket = io.of("/chat");
+app_socket.on("connection", function (socket, data) {
+  console.log("Client connected");
+
+  socket.on("disconnect", function () {
+    console.log("Client disconnected");
+  });
+
+  socket.on("join", function (room) {
+    socket.join(room);
+  });
 });
