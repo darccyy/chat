@@ -2,6 +2,7 @@ import { Component } from "react";
 import { io } from "socket.io-client";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faRedo } from "@fortawesome/free-solid-svg-icons";
+import $ from "jquery";
 
 import "../scss/Log.scss";
 
@@ -27,6 +28,7 @@ export default class extends Component {
     // Refresh from server
     const self = this; // Access 'this' in callback
     this.socket.on("refresh", function (data) {
+      console.log("REFRESH");
       self.setState({ log: data.log });
       self.setState({ loading: Math.max(0, self.state.loading - 1) });
     });
@@ -63,8 +65,10 @@ export default class extends Component {
     this.setState({ loading: this.state.loading + 1 });
 
     try {
+      var content = $("#content").val();
+      $("#content").val("");
       var res = await fetch(
-        `/api/log/post?channel=${this.state.channel}&content=${this.state.content}`
+        `/api/log/post?channel=${this.state.channel}&content=${content}`
       );
       console.log(res);
     } catch (err) {
@@ -103,10 +107,8 @@ export default class extends Component {
         {/* Message content */}
         <input
           type="text"
+          id="content"
           name="content"
-          onChange={(event) =>
-            this.setState({ [event.target.name]: event.target.value })
-          }
           autoFocus
           onKeyDown={(event) => (event.key === "Enter" ? this.post() : null)}
           placeholder="Message Content"
