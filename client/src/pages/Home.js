@@ -9,7 +9,7 @@ class Home extends Component {
     // Home page
     return (
       <div className="Home">
-        <h1>Home Page</h1>
+        <h1>Log</h1>
 
         {/* Logs */}
         <Log />

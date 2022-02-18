@@ -9,7 +9,6 @@ export default class extends Component {
   state = { channel: "root", input: "", log: null, loading: 0 };
   socket = null;
 
-  // Fetch message from server, Add to state
   componentDidMount() {
     // Initial get log
     this.get();
@@ -65,10 +64,9 @@ export default class extends Component {
 
     try {
       var res = await fetch(
-        `/api/log/post?channel=root&content=${this.state.input}`
+        `/api/log/post?channel=${this.state.channel}&content=${this.state.content}`
       );
       console.log(res);
-      this.get();
     } catch (err) {
       console.error(err);
     }
@@ -105,12 +103,13 @@ export default class extends Component {
         {/* Message content */}
         <input
           type="text"
-          id="input"
-          name="input"
+          name="content"
           onChange={(event) =>
             this.setState({ [event.target.name]: event.target.value })
           }
           autoFocus
+          onKeyDown={(event) => (event.key === "Enter" ? this.post() : null)}
+          placeholder="Message Content"
         />
 
         {/* Channel */}
@@ -161,7 +160,10 @@ export default class extends Component {
               .map((item, index) => {
                 return (
                   <li key={index}>
-                    {item.content} <span class="time">{new Date(item.time).toLocaleDateString()}</span>
+                    {item.content}{" "}
+                    <span className="time">
+                      {new Date(item.time).toLocaleDateString()}
+                    </span>
                   </li>
                 );
               })
