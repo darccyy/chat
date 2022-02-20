@@ -31,6 +31,42 @@ app.use(staticFiles);
 // Start router
 const router = express.Router();
 
+//! Auth
+
+const axios = require("axios");
+
+const clientID = "ad9b5577e89e3e1ba247";
+//! Move to .env
+const clientSecret = process.env.AUTHSECRET;
+
+router.get("/api/home", (req, res) => {
+  // The req.query object has the query params that were sent to this route.
+  const requestToken = req.query.code;
+  console.log("requestToken", requestToken);
+
+  axios({
+    method: "post",
+    url: `https://github.com/login/oauth/access_token?client_id=${clientID}&client_secret=${clientSecret}&code=${requestToken}`,
+    // Set the content type header, so that we get the response in JSON
+    headers: {
+      accept: "application/json",
+    },
+  }).then((response, err) => {
+    if (response.error) {
+      console.log(response.error);
+      res.status(500).send(response.error);
+      return;
+    }
+
+    const accessToken = response.data.access_token;
+    console.log(response.data);
+
+    // redirect the user to the home page, along with the access token
+    console.log("accessToken", accessToken);
+    res.json({accessToken});
+  });
+});
+
 //! Test
 router.get("/api/test", (req, res) => {
   res.status(200).send("Hello World");
