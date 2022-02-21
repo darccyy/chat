@@ -2,7 +2,7 @@ import { Component } from "react";
 
 import "../scss/Error404.scss";
 
-class Error404 extends Component {
+export default class extends Component {
   render() {
     // 404 page
     return (
@@ -12,5 +12,3 @@ class Error404 extends Component {
     );
   }
 }
-
-export default Error404;

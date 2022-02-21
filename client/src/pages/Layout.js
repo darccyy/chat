@@ -3,7 +3,7 @@ import { Outlet, Link } from "react-router-dom";
 
 import "../scss/Layout.scss";
 
-class Layout extends Component {
+export default class extends Component {
   render() {
     // Basic layout for all pages
     return (
@@ -21,5 +21,3 @@ class Layout extends Component {
     );
   }
 }
-
-export default Layout;

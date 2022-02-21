@@ -33,8 +33,8 @@ export default class extends Component {
       self.setState({ loading: Math.max(0, self.state.loading - 1) });
     });
 
-    // Refresh from client every 30 seconds
-    setInterval(this.get, 30000);
+    //? Refresh from client every 30 seconds
+    // setInterval(this.get, 30000);
   }
 
   // Get logs
